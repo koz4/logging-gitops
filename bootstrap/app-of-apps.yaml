@@ -56,8 +56,9 @@ spec:
     targetRevision: HEAD
     path: vector
     helm:
+      releaseName: vector # Zmiana na 'vector' dla spójności
       valueFiles:
-        - values.yaml
+        - values.yaml # JAWNE użycie Twojego pliku values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: loki-stack
