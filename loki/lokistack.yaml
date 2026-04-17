@@ -10,21 +10,8 @@ spec:
     - version: v13
       effectiveDate: "2024-01-01"
     secret:
-      name: loki-s3-secret
+      name: loki-bucket-claim
       type: s3
-  storageClassName: gp3-csi # Zmień na swój StorageClass (np. odf-storagecluster-ceph-rbd)
+  storageClassName: ocs-storagecluster-ceph-rbd
   tenants:
     mode: openshift-logging
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: loki-s3-secret
-  namespace: loki-stack
-stringData:
-  access_key_id: "PLACEHOLDER_ACCESS_KEY"
-  access_key_secret: "PLACEHOLDER_SECRET_KEY"
-  bucket: "loki-logs"
-  endpoint: "https://s3.example.com"
-  region: "eu-central-1"
-type: Opaque

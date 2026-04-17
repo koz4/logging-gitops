@@ -2,18 +2,17 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
 metadata:
   name: loki-application
-  namespace: grafana-operator-ns # ZMIEŃ NA NAMESPACE TWOJEJ GRAFANY
+  namespace: grafana
 spec:
   instanceSelector:
     matchLabels:
-      dashboards: "grafana"
+      dashboards: "grafana" # Upewnij się, że Twoja instancja Grafany ma ten label
   datasource:
     name: "Loki (Applications)"
     type: loki
-    url: "https://logging-loki-gateway-http.loki-stack.svc:8080"
+    url: "http://logging-loki-gateway-http.loki-stack.svc:8080"
     jsonData:
       httpHeaderName1: "X-Scope-OrgID"
-      tlsSkipVerify: true
     secureJsonData:
       httpHeaderValue1: "application"
 ---
@@ -21,7 +20,7 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
 metadata:
   name: loki-network
-  namespace: grafana-operator-ns
+  namespace: grafana
 spec:
   instanceSelector:
     matchLabels:
@@ -29,9 +28,8 @@ spec:
   datasource:
     name: "Loki (Network)"
     type: loki
-    url: "https://logging-loki-gateway-http.loki-stack.svc:8080"
+    url: "http://logging-loki-gateway-http.loki-stack.svc:8080"
     jsonData:
       httpHeaderName1: "X-Scope-OrgID"
-      tlsSkipVerify: true
     secureJsonData:
       httpHeaderValue1: "network"
