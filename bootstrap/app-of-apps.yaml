@@ -1,50 +1,6 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: logging-operators
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
-spec:
-  project: logging
-  source:
-    repoURL: https://github.com/koz4/logging-gitops.git # ZAKTUALIZOWANE
-    targetRevision: HEAD
-    path: operators
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: openshift-operators
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: loki-stack
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
-spec:
-  project: logging
-  source:
-    repoURL: https://github.com/koz4/logging-gitops.git # ZAKTUALIZOWANE
-    targetRevision: HEAD
-    path: loki
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: loki-stack
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - ServerSideApply=true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
   name: vector-logging
   namespace: argocd
   annotations:
@@ -55,8 +11,9 @@ spec:
     repoURL: https://github.com/koz4/logging-gitops.git
     targetRevision: HEAD
     path: vector
-    kustomize:
-      helm: true
+    helm:
+      valueFiles:
+        - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: loki-stack
