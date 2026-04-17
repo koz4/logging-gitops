@@ -1,11 +1,20 @@
 role: Agent
 
+persistence:
+  enabled: false
+
+containerSecurityContext:
+  privileged: true
+  runAsUser: 0
+
 customConfig:
   sources:
     kubernetes_logs:
       type: kubernetes_logs
+      data_dir: /tmp # Bezpośrednio w /tmp
     journald_logs:
       type: journald
+      data_dir: /tmp # Bezpośrednio w /tmp
     syslog_udp:
       type: syslog
       address: 0.0.0.0:514
@@ -40,18 +49,26 @@ customConfig:
       labels:
         tenant: "{{ .tenant }}"
         source_type: "{{ .source_type }}"
+      encoding:
+        codec: json
       request:
         headers:
           X-Scope-OrgID: "{{ .tenant }}"
 
-containerDefs:
-  - name: vector
-    env:
-      - name: VECTOR_TOKEN
-        valueFrom:
-          secretKeyRef:
-            name: vector-token-secret
-            key: token
+extraEnv:
+  - name: VECTOR_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: vector-token-secret
+        key: token
+
+extraVolumes:
+  - name: tmp
+    emptyDir: {}
+
+extraVolumeMounts:
+  - name: tmp
+    mountPath: /tmp
 
 service:
   enabled: true
