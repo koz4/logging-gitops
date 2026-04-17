@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: logging
+  namespace: openshift-gitops
+spec:
+  description: Centralized Logging Project (Loki + Vector)
+  sourceRepos: ["*"]
+  destinations:
+    - namespace: openshift-operators-redhat
+      server: https://kubernetes.default.svc
+    - namespace: loki-stack
+      server: https://kubernetes.default.svc
+    - namespace: openshift-logging
+      server: https://kubernetes.default.svc
+    - namespace: openshift-config-managed
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: logging-stack-root
+  namespace: openshift-gitops
+spec:
+  project: logging
+  source:
+    repoURL: https://github.com/koz4/logging-gitops.git # ZMIEŃ NA SWÓJ REPO URL
+    targetRevision: HEAD
+    path: bootstrap
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: openshift-gitops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

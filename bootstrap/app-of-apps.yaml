@@ -1,0 +1,64 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: logging-operators
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: logging
+  source:
+    repoURL: https://github.com/koz4/logging-gitops.git # ZMIEŃ NA SWÓJ REPO URL
+    targetRevision: HEAD
+    path: operators
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: openshift-operators-redhat
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki-stack
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: logging
+  source:
+    repoURL: https://github.com/example/logging-gitops.git # ZMIEŃ NA SWÓJ REPO URL
+    targetRevision: HEAD
+    path: loki
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: loki-stack
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vector-logging
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  project: logging
+  source:
+    repoURL: https://github.com/example/logging-gitops.git # ZMIEŃ NA SWÓJ REPO URL
+    targetRevision: HEAD
+    path: vector
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: loki-stack
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

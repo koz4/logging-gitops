@@ -1,0 +1,63 @@
+role: Agent
+
+customConfig:
+  sources:
+    kubernetes_logs:
+      type: kubernetes_logs
+    journald_logs:
+      type: journald
+    syslog_udp:
+      type: syslog
+      address: 0.0.0.0:514
+      mode: udp
+    syslog_tcp:
+      type: syslog
+      address: 0.0.0.0:514
+      mode: tcp
+
+  transforms:
+    route_logs:
+      type: remap
+      inputs: ["kubernetes_logs", "journald_logs", "syslog_udp", "syslog_tcp"]
+      source: |
+        .cluster_id = "cluster-01"
+        if exists(.kubernetes) {
+          .tenant = "application"
+        } else if exists(.syslog) {
+          .tenant = "network"
+        } else {
+          .tenant = "infrastructure"
+        }
+        # Dodatkowe tagi dla urządzeń sieciowych
+        if exists(.syslog) {
+          .device_ip = .host
+        }
+
+  sinks:
+    loki_gateway:
+      type: loki
+      inputs: ["route_logs"]
+      endpoint: "https://logging-loki-gateway-http.loki-stack.svc:8080"
+      auth:
+        strategy: bearer
+        token: "${VECTOR_TOKEN}"
+      labels:
+        tenant: "{{ .tenant }}"
+        source_type: "{{ .source_type }}"
+        app: "{{ .kubernetes.pod_labels.app | \"unknown\" }}"
+      request:
+        headers:
+          X-Scope-OrgID: "{{ .tenant }}"
+
+service:
+  enabled: true
+  type: LoadBalancer
+  ports:
+    - name: syslog-udp
+      port: 514
+      protocol: UDP
+      targetPort: 514
+    - name: syslog-tcp
+      port: 514
+      protocol: TCP
+      targetPort: 514
