@@ -6,13 +6,14 @@ metadata:
 spec:
   instanceSelector:
     matchLabels:
-      dashboards: "grafana" # Upewnij się, że Twoja instancja Grafany ma ten label
+      dashboards: "grafana"
   datasource:
     name: "Loki (Applications)"
     type: loki
-    url: "http://logging-loki-gateway-http.loki-stack.svc:8080"
+    url: "https://logging-gateway-http.loki-stack.svc:8080"
     jsonData:
       httpHeaderName1: "X-Scope-OrgID"
+      tlsSkipVerify: true # Dodane ze względu na wymuszony HTTPS
     secureJsonData:
       httpHeaderValue1: "application"
 ---
@@ -28,8 +29,9 @@ spec:
   datasource:
     name: "Loki (Network)"
     type: loki
-    url: "http://logging-loki-gateway-http.loki-stack.svc:8080"
+    url: "https://logging-gateway-http.loki-stack.svc:8080"
     jsonData:
       httpHeaderName1: "X-Scope-OrgID"
+      tlsSkipVerify: true
     secureJsonData:
       httpHeaderValue1: "network"
