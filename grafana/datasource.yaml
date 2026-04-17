@@ -8,35 +8,19 @@ spec:
     matchLabels:
       dashboards: "grafana"
   datasource:
-    name: "Loki (Applications)"
+    name: "Loki-Apps-mTLS" # Zmieniona nazwa, aby uniknąć konfliktu
     type: loki
     url: "https://logging-gateway-http.loki-stack.svc:8080"
+    access: proxy
     jsonData:
+      tlsAuth: true
+      tlsAuthWithCACert: true
+      tlsSkipVerify: false
       httpHeaderName1: "X-Scope-OrgID"
       httpHeaderName2: "Authorization"
-      tlsSkipVerify: true
     secureJsonData:
+      tlsCACert: "PLACEHOLDER_CA"
+      tlsClientCert: "PLACEHOLDER_CLIENT_CERT"
+      tlsClientKey: "PLACEHOLDER_CLIENT_KEY"
       httpHeaderValue1: "application"
-      # UWAGA: Ten token musi być aktualny. Wypchnij plik po wygenerowaniu tokena.
-      httpHeaderValue2: "Bearer PLACEHOLDER_TOKEN" 
----
-apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaDatasource
-metadata:
-  name: loki-network
-  namespace: grafana
-spec:
-  instanceSelector:
-    matchLabels:
-      dashboards: "grafana"
-  datasource:
-    name: "Loki (Network)"
-    type: loki
-    url: "https://logging-gateway-http.loki-stack.svc:8080"
-    jsonData:
-      httpHeaderName1: "X-Scope-OrgID"
-      httpHeaderName2: "Authorization"
-      tlsSkipVerify: true
-    secureJsonData:
-      httpHeaderValue1: "network"
       httpHeaderValue2: "Bearer PLACEHOLDER_TOKEN"
