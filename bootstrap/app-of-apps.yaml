@@ -8,7 +8,7 @@ metadata:
 spec:
   project: logging
   source:
-    repoURL: https://github.com/koz4/logging-gitops.git # ZMIEŃ NA SWÓJ REPO URL
+    repoURL: https://github.com/koz4/logging-gitops.git # ZAKTUALIZOWANE
     targetRevision: HEAD
     path: operators
   destination:
@@ -29,7 +29,7 @@ metadata:
 spec:
   project: logging
   source:
-    repoURL: https://github.com/example/logging-gitops.git # ZMIEŃ NA SWÓJ REPO URL
+    repoURL: https://github.com/koz4/logging-gitops.git # ZAKTUALIZOWANE
     targetRevision: HEAD
     path: loki
   destination:
@@ -52,7 +52,7 @@ metadata:
 spec:
   project: logging
   source:
-    repoURL: https://github.com/example/logging-gitops.git # ZMIEŃ NA SWÓJ REPO URL
+    repoURL: https://github.com/koz4/logging-gitops.git # ZAKTUALIZOWANE
     targetRevision: HEAD
     path: vector
   destination:
