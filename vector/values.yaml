@@ -28,26 +28,30 @@ customConfig:
         } else {
           .tenant = "infrastructure"
         }
-        # Dodatkowe tagi dla urządzeń sieciowych
-        if exists(.syslog) {
-          .device_ip = .host
-        }
 
   sinks:
     loki_gateway:
       type: loki
       inputs: ["route_logs"]
-      endpoint: "https://logging-loki-gateway-http.loki-stack.svc:8080"
+      endpoint: "http://logging-gateway-http.loki-stack.svc:8080"
       auth:
         strategy: bearer
         token: "${VECTOR_TOKEN}"
       labels:
         tenant: "{{ .tenant }}"
         source_type: "{{ .source_type }}"
-        app: "{{ .kubernetes.pod_labels.app | \"unknown\" }}"
       request:
         headers:
           X-Scope-OrgID: "{{ .tenant }}"
+
+containerDefs:
+  - name: vector
+    env:
+      - name: VECTOR_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: vector-token-secret
+            key: token
 
 service:
   enabled: true
@@ -56,8 +60,6 @@ service:
     - name: syslog-udp
       port: 514
       protocol: UDP
-      targetPort: 514
     - name: syslog-tcp
       port: 514
       protocol: TCP
-      targetPort: 514
