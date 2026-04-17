@@ -52,9 +52,11 @@ metadata:
 spec:
   project: logging
   source:
-    repoURL: https://github.com/koz4/logging-gitops.git # ZAKTUALIZOWANE
+    repoURL: https://github.com/koz4/logging-gitops.git
     targetRevision: HEAD
     path: vector
+    kustomize:
+      helm: true
   destination:
     server: https://kubernetes.default.svc
     namespace: loki-stack
