@@ -20,13 +20,13 @@ spec:
         targets:
           - expr: "sum by (host) (count_over_time({tenant=\"network\"} [$__interval]))"
             legendFormat: "{{host}}"
-            datasource: { type: "loki", uid: "loki-network" }
+            datasource: { type: "loki", uid: "Loki-Final-Fixed" }
       - title: "Recent Network Events"
         type: "logs"
         gridPos: { h: 16, w: 24, x: 0, y: 8 }
         targets:
           - expr: "{tenant=\"network\"}"
-            datasource: { type: "loki", uid: "loki-network" }
+            datasource: { type: "loki", uid: "Loki-Final-Fixed" }
     templating:
       list:
         - name: "host"

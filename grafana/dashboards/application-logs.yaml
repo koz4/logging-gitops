@@ -7,37 +7,41 @@ spec:
   instanceSelector:
     matchLabels:
       dashboards: "grafana"
+  resourcetype: "grafana" # Dodane dla zgodności z v5 operatora
   dashboard:
     title: "Loki: Application Logs"
-    uid: "loki-apps"
-    tags: ["loki", "openshift", "apps"]
+    uid: "loki-apps-fixed"
+    tags: ["loki", "apps"]
     timezone: "browser"
     schemaVersion: 36
     panels:
-      - title: "Log Volume by Namespace"
-        type: "timeseries"
-        gridPos: { h: 8, w: 12, x: 0, y: 0 }
-        targets:
-          - expr: "sum by (namespace) (count_over_time({tenant=\"application\"} [$__interval]))"
-            legendFormat: "{{namespace}}"
-            datasource: { type: "loki", uid: "loki-application" }
-      - title: "Error Rate (keywords: error, fail, exception)"
-        type: "stat"
-        gridPos: { h: 8, w: 12, x: 12, y: 0 }
-        targets:
-          - expr: "sum(count_over_time({tenant=\"application\"} |~ \"(?i)error|fail|exception\" [$__interval]))"
-            datasource: { type: "loki", uid: "loki-application" }
       - title: "Log Streams"
         type: "logs"
-        gridPos: { h: 16, w: 24, x: 0, y: 8 }
+        gridPos: { h: 20, w: 24, x: 0, y: 0 }
         targets:
-          - expr: "{tenant=\"application\"} | json"
-            datasource: { type: "loki", uid: "loki-application" }
-    templating:
-      list:
-        - name: "namespace"
-          type: "query"
-          query: "label_values({tenant=\"application\"}, namespace)"
-          datasource: { type: "loki", uid: "loki-application" }
-          refresh: 1
-          includeAll: true
+          - expr: "{tenant=\"application\"}"
+            datasource: { type: "loki", uid: "Loki-Final-Fixed" }
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: loki-network-logs
+  namespace: grafana
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  resourcetype: "grafana"
+  dashboard:
+    title: "Loki: Network Logs (Syslog)"
+    uid: "loki-network-fixed"
+    tags: ["loki", "network"]
+    timezone: "browser"
+    schemaVersion: 36
+    panels:
+      - title: "Network Log Streams"
+        type: "logs"
+        gridPos: { h: 20, w: 24, x: 0, y: 0 }
+        targets:
+          - expr: "{tenant=\"network\"}"
+            datasource: { type: "loki", uid: "Loki-Final-Fixed" }
