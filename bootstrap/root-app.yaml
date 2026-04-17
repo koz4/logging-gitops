@@ -2,18 +2,12 @@ apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: logging
-  namespace: openshift-gitops
+  namespace: argocd
 spec:
   description: Centralized Logging Project (Loki + Vector)
   sourceRepos: ["*"]
   destinations:
-    - namespace: openshift-operators-redhat
-      server: https://kubernetes.default.svc
-    - namespace: loki-stack
-      server: https://kubernetes.default.svc
-    - namespace: openshift-logging
-      server: https://kubernetes.default.svc
-    - namespace: openshift-config-managed
+    - namespace: '*'
       server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: '*'
@@ -26,7 +20,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: logging-stack-root
-  namespace: openshift-gitops
+  namespace: argocd
 spec:
   project: logging
   source:
@@ -35,7 +29,7 @@ spec:
     path: bootstrap
   destination:
     server: https://kubernetes.default.svc
-    namespace: openshift-gitops
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true
