@@ -1,5 +1,9 @@
 role: Agent
 
+image:
+  repository: timberio/vector
+  tag: 0.43.0-alpine
+
 persistence:
   enabled: false
 
@@ -11,10 +15,10 @@ customConfig:
   sources:
     kubernetes_logs:
       type: kubernetes_logs
-      data_dir: /tmp # Bezpośrednio w /tmp
+      data_dir: /tmp
     journald_logs:
       type: journald
-      data_dir: /tmp # Bezpośrednio w /tmp
+      data_dir: /tmp
     syslog_udp:
       type: syslog
       address: 0.0.0.0:514
@@ -42,18 +46,20 @@ customConfig:
     loki_gateway:
       type: loki
       inputs: ["route_logs"]
-      endpoint: "http://logging-gateway-http.loki-stack.svc:8080"
+      endpoint: "https://logging-gateway-http.loki-stack.svc:8080" # Użycie HTTPS
+      tls:
+        verify_certificate: false # Skip TLS verify dla komunikacji wewnętrznej
       auth:
         strategy: bearer
         token: "${VECTOR_TOKEN}"
       labels:
-        tenant: "{{ .tenant }}"
+        tenant: "{{ .tenant }}" # Dynamiczna etykieta
         source_type: "{{ .source_type }}"
       encoding:
         codec: json
       request:
         headers:
-          X-Scope-OrgID: "{{ .tenant }}"
+          X-Scope-OrgID: "{{ .tenant }}" # Dynamiczny nagłówek tenant
 
 extraEnv:
   - name: VECTOR_TOKEN
