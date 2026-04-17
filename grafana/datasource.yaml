@@ -13,25 +13,10 @@ spec:
     url: "https://logging-gateway-http.loki-stack.svc:8080"
     jsonData:
       httpHeaderName1: "X-Scope-OrgID"
-      tlsSkipVerify: true # Dodane ze względu na wymuszony HTTPS
-    secureJsonData:
-      httpHeaderValue1: "application"
----
-apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaDatasource
-metadata:
-  name: loki-network
-  namespace: grafana
-spec:
-  instanceSelector:
-    matchLabels:
-      dashboards: "grafana"
-  datasource:
-    name: "Loki (Network)"
-    type: loki
-    url: "https://logging-gateway-http.loki-stack.svc:8080"
-    jsonData:
-      httpHeaderName1: "X-Scope-OrgID"
+      httpHeaderName2: "Authorization"
       tlsSkipVerify: true
     secureJsonData:
-      httpHeaderValue1: "network"
+      httpHeaderValue1: "application"
+      # Tutaj należy wstawić: "Bearer <TOKEN_SA_GRAFANA>"
+      # Możesz pobrać token komendą: oc create token grafana-sa -n grafana
+      httpHeaderValue2: "Bearer PLACEHOLDER_TOKEN" 
